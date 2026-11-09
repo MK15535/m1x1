@@ -1,0 +1,35 @@
+name: Build Windows Executable (.exe)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --noconsole --onefile --name="QuotationManager" main.py
+
+    - name: Upload Compiled Executable Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: QuotationManager-Windows-Exe
+        path: dist/QuotationManager.exe
